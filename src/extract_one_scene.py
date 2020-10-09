@@ -1,6 +1,8 @@
 # extract_one_scene.py
 # extract can-front and radar-front file-path in the first scene
 
+import json
+
 import matplotlib
 
 from nuscenes.nuscenes import NuScenes
@@ -13,17 +15,46 @@ my_scene = nusc.scene[0]
 
 first_sample_token = my_scene['first_sample_token']
 
-current_sample = nusc.get('sample', first_sample_token)
-cam_file_paths = []
-radar_file_paths = []
+extracted_data = {
+    'cam_front': {
+        'timestamp': [],
+        'file_name': [],
+        'ego_pose': {
+            'rotation': [],
+            'translation': []
+        },
+        'calibrated_sensor': {
+            'rotation': [],
+            'translation': []
+        },
+        'camera_intrinsic': []
+    },
+    'radar_front': {
+        'timestamp': [],
+        'file_name': [],
+        'ego_pose': {
+            'rotation': [],
+            'translation': []
+        },
+        'calibrated_sensor': {
+            'rotation': [],
+            'translation': []
+        },
+    }
+}
 
-while not current_sample['next'] == '':
-    sensors = ['CAM_FRONT', 'RADAR_FRONT']
+#相机和雷达的sample_token相同，但是ego_pose, timestamp是不同的
+sensors = ['CAM_FRONT', 'RADAR_FRONT']
+for sensor_channel in sensors:
+    current_sample = nusc.get('sample', first_sample_token)
 
-    #相机和雷达的sample_token相同，但是ego_pose, timestamp是不同的
-    for id_sensor, name_sensor in enumerate(sensors):
+    while not current_sample['next'] == '':
         front_data = nusc.get('sample_data',
-                              current_sample['data'][sensors[id_sensor]])
+                              current_sample['data'][sensor_channel])
+
+        timestamp = front_data['timestamp']
+
+        file_name = front_data['filename']
 
         ego_pose_token = front_data['ego_pose_token']
         ego_pose = nusc.get('ego_pose', ego_pose_token)
@@ -36,25 +67,47 @@ while not current_sample['next'] == '':
         calibrated_sensor_translation_3f = calibrated_sensor['translation']
         calibrated_sensor_rotation_quat4f = calibrated_sensor['rotation']
 
-        sensor_token = calibrated_sensor['sensor_token']
-        sensor = nusc.get('sensor', sensor_token)
-        sensor_modality = sensor['modality']
+        sensor_modality = front_data['sensor_modality']
 
         if sensor_modality == 'camera':
             calibrated_sensor_cam_intri = calibrated_sensor['camera_intrinsic']
-            cam_file_paths.append(front_data['filename'])
+
+            extracted_data['cam_front']['timestamp'].append(timestamp)
+            extracted_data['cam_front']['file_name'].append(file_name)
+            extracted_data['cam_front']['ego_pose']['rotation'].append(
+                ego_rotation_quat4f)
+            extracted_data['cam_front']['ego_pose']['translation'].append(
+                ego_translation_3f)
+            extracted_data['cam_front']['calibrated_sensor'][
+                'rotation'].append(calibrated_sensor_rotation_quat4f)
+            extracted_data['cam_front']['calibrated_sensor'][
+                'translation'].append(calibrated_sensor_translation_3f)
+            extracted_data['cam_front']['camera_intrinsic'].append(
+                calibrated_sensor_cam_intri)
+
         elif sensor_modality == 'radar':
-            radar_file_paths.append(front_data['filename'])
+            extracted_data['radar_front']['timestamp'].append(timestamp)
+            extracted_data['radar_front']['file_name'].append(file_name)
+            extracted_data['radar_front']['ego_pose']['rotation'].append(
+                ego_rotation_quat4f)
+            extracted_data['radar_front']['ego_pose']['translation'].append(
+                ego_translation_3f)
+            extracted_data['radar_front']['calibrated_sensor'][
+                'rotation'].append(calibrated_sensor_rotation_quat4f)
+            extracted_data['radar_front']['calibrated_sensor'][
+                'translation'].append(calibrated_sensor_translation_3f)
         else:
-            print("Error: the modality of sensor must be camera or radar")
+            raise IndexError("the modality of sensor must be camera or radar")
 
-    current_sample_token = current_sample['next']
-    current_sample = nusc.get('sample', current_sample_token)
+        current_sample_token = current_sample['next']
+        current_sample = nusc.get('sample', current_sample_token)
 
-print(f"Cam-Path:{len(cam_file_paths)}")
-for i in cam_file_paths:
-    print(i)
+extracted_data_json = json.dumps(extracted_data, )
 
-print(f"Radar-Path:{len(radar_file_paths)}")
-for i in radar_file_paths:
-    print(i)
+with open("src/extracted_data.json", "w") as f:
+    try:
+        json.dump(extracted_data, f, indent=4, separators=(',', ': '))
+    except IOError:
+        print("write json Error")
+    else:
+        print("write to json succeed")
