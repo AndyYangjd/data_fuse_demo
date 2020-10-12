@@ -1,4 +1,14 @@
 .vscode/settings.json
+src/vs_prj/geometry_transform/.vs/
+src/vs_prj/geometry_transform/Debug/
+src/vs_prj/geometry_transform/include/3rdParty/
+src/vs_prj/geometry_transform/Release/
+*.user
+*.filters
+*.tlog
+*.obj
+*.pdb
+*.idb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
