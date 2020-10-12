@@ -1,8 +1,22 @@
 # data_fuse_demo
 create a demo about data-fuse using nuScenes dataset
 
-## language
-python
+# language, Ide, 3rd-Dependency
+lan:
+- Python3.8: extract info
+- Cpp: version support c++11
+
+Ide:
+- vscode
+- vs2019 community
+
+Python-Dep:
+- matplotlib
+- json
+- nuscenes-devkit
+
+Cpp-Dep:
+- Eigne3
 
 ## file-role
 - extract_one_scene.py: extract can-front and radar-front file-path in the first scene
