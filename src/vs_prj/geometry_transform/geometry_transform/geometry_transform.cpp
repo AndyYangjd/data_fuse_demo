@@ -19,8 +19,8 @@ bool writeToCSV(
 
 	for (auto T : T_list_)
 	{
-		int num_rows = T.rows();
-		int num_cols = T.cols();
+		const int num_rows = T.matrix().rows();
+		const int num_cols = T.matrix().cols();
 
 		for (int row = 0; row < num_rows; row++)
 		{
@@ -96,6 +96,7 @@ int main(void)
 	ofstream outfile;
 
 	array<Isometry3d, 2> T_list{cam_T_mat, radar_T_mat};
+	cout << cam_T_mat.matrix() << endl;
 
 	bool st_write_csv_bool;
 	st_write_csv_bool=writeToCSV(outfile, file_name, T_list);
