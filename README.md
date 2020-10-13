@@ -22,3 +22,6 @@ Cpp-Dep:
 - extract_one_scene.py: extract can-front and radar-front file-path in the first scene
 - convert_radarPcd_to_ascii.py: convert the file-format of Radar-pcd from binary to ascii, so we can parse the info about points, such as Position, relative-Velocity..
 - geometry_transform.cpp: get the Transform-matrix of cam and radar
+- data/calibration_parameter.xlsx: the calibration parameter of front camera and radar.
+- data/extracted_data.json: the out-put of extrac_one-scene.py
+- data/tranform_matrix.csv: the out-put of geometry_transform.cpp
