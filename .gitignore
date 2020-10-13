@@ -9,6 +9,8 @@ src/vs_prj/geometry_transform/Release/
 *.obj
 *.pdb
 *.idb
+*.ilk
+*.exe
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
