@@ -76,7 +76,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>F:\data_fuse_demo\src\vs_prj\geometry_transform\include\3rdParty\Eigen3;$(IncludePath)</IncludePath>
+    <IncludePath>F:\data_fuse_demo\src\vs_prj\geometry_transform\geometry_transform;F:\data_fuse_demo\src\vs_prj\geometry_transform\include\3rdParty\Eigen3;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\data_fuse_demo\src\vs_prj\geometry_transform\geometry_transform\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -155,6 +156,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="geometry_transform.cpp" />
+    <ClCompile Include="lib\coord_trans.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\coord_trans.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

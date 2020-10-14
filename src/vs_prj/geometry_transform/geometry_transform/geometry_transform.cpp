@@ -1,42 +1,5 @@
 ﻿#include <iostream>
-#include <Eigen/Core>
-#include <Eigen/Geometry>
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <array>
-
-using namespace std;
-using namespace Eigen;
-
-bool writeToCSV(
-	ofstream & outfile_, 
-	const string & file_name_, 
-	const array<Isometry3d, 2> & T_list_)
-{
-	bool st_return{ true };
-	outfile_.open(file_name_, ios::out);
-
-	for (auto T : T_list_)
-	{
-		const int num_rows = T.matrix().rows();
-		const int num_cols = T.matrix().cols();
-
-		for (int row = 0; row < num_rows; row++)
-		{
-			for (int col = 0; col < num_cols; col++)
-			{
-				outfile_ << T(row, col);
-				outfile_ << ",";
-			}
-			outfile_ << endl;
-		}
-		outfile_ << endl;
-	}
-	outfile_.close();
-
-	return st_return;
-}
+#include "include/coord_trans.hpp"
 
 int main(void)
 {
@@ -73,36 +36,34 @@ int main(void)
 		0.0017453283658983088
 	);
 
-	Matrix3d cam_rotation_mat =
-		cam_rotation_quat.toRotationMatrix();
-	Matrix3d radar_rotation_mat =
-		radar_rotation_quat.toRotationMatrix();
+	Isometry3d cam2car_T_mat = Isometry3d::Identity();
+	cam2car_T_mat.rotate(cam_rotation_quat);
+	cam2car_T_mat.pretranslate(cam_trans_m);
 
-	Isometry3d cam_T_mat = Isometry3d::Identity();
-	cam_T_mat.rotate(cam_rotation_quat);
-	cam_T_mat.pretranslate(cam_trans_m);
+	Isometry3d radar2car_T_mat = Isometry3d::Identity();
+	radar2car_T_mat.rotate(radar_rotation_quat);
+	radar2car_T_mat.pretranslate(radar_trans_m);
 
-	Isometry3d radar_T_mat = Isometry3d::Identity();
-	radar_T_mat.rotate(radar_rotation_quat);
-	radar_T_mat.pretranslate(radar_trans_m);
+	array<Isometry3d, 2> T_sensor2car_list{ cam2car_T_mat, radar2car_T_mat };
 
-	cout << "Cam:" << endl;
-	cout << cam_T_mat.matrix() << endl;
-	
-	cout << "radar:" << endl;
-	cout << radar_T_mat.matrix() << endl;
-	
+	Isometry3d car2cam_T_mat = cam2car_T_mat.inverse();
+	Isometry3d car2radar_T_mat = radar2car_T_mat.inverse();
+
+	array<Isometry3d, 2> T_car2sensor_list{ car2cam_T_mat, car2radar_T_mat };
+
 	string file_name = "tranform_matrix.csv";
 	ofstream outfile;
 
-	array<Isometry3d, 2> T_list{cam_T_mat, radar_T_mat};
-	cout << cam_T_mat.matrix() << endl;
-
 	bool st_write_csv_bool;
-	st_write_csv_bool=writeToCSV(outfile, file_name, T_list);
+	st_write_csv_bool=writeToCSV(outfile, file_name, T_sensor2car_list);
 
 	if(!st_write_csv_bool)
 		cout << "write data fail:" << file_name;
+
+	Vector3d pos_car1{ 5, 0.5, 0.5 };
+	Vector3d pos_cam1;
+	pos_cam1 = transCoord(pos_car1, T_car2sensor_list[0], cam_intri_m);
+	cout << pos_cam1;
 
 	return 0;
 }
