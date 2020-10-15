@@ -8,7 +8,7 @@ import matplotlib
 from nuscenes.nuscenes import NuScenes
 
 nusc = NuScenes(version='v1.0-mini',
-                dataroot='D:\\Library\\Thesis\\datasets\\data\\sets\\nuscenes',
+                dataroot=r'F:\datasets\data\sets\nuscenes',
                 verbose=True)
 
 my_scene = nusc.scene[0]

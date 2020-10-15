@@ -11,6 +11,13 @@ src/vs_prj/geometry_transform/Release/
 *.idb
 *.ilk
 *.exe
+*.suo
+*.db
+*.recipe
+*.ipch
+3rdParty/
+
+Untitled.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
