@@ -1,4 +1,4 @@
-#include "include/coord_trans.hpp"
+#include "coord_trans.hpp"
 
 bool writeToCSV(
 	ofstream & outfile_,

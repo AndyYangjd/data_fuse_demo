@@ -1,5 +1,5 @@
 ﻿#include <iostream>
-#include "include/coord_trans.hpp"
+#include "coord_trans.hpp"
 
 int main(void)
 {
@@ -60,10 +60,31 @@ int main(void)
 	if(!st_write_csv_bool)
 		cout << "write data fail:" << file_name;
 
-	Vector3d pos_car1{ 5, 0.5, 0.5 };
-	Vector3d pos_cam1;
-	pos_cam1 = transCoord(pos_car1, T_car2sensor_list[0], cam_intri_m);
-	cout << pos_cam1;
+	Quaterniond ego_pose_rotation_quat(
+		0.5721129977125774,
+		-0.0014962022442161157,
+		0.011922678049447764,
+		-0.8200867813684729
+	);
+	Vector3d ego_pose_translation_m(
+		411.25243634487725,
+		1180.7511754315697,
+		0.0
+	);
+
+	Isometry3d car2world_T_mat = Isometry3d::Identity();
+	car2world_T_mat.rotate(ego_pose_rotation_quat);
+	car2world_T_mat.pretranslate(ego_pose_translation_m);
+
+	Isometry3d world2car_T_mat = car2world_T_mat.inverse();
+
+	Vector3d posWorld_anns_center{ 399.863, 1143.574, 0.738 };
+	Vector3d posCar_anns_center;
+	posCar_anns_center = transCoord(
+		posWorld_anns_center, 
+		world2car_T_mat
+);
+	cout << posCar_anns_center;
 
 	return 0;
 }
