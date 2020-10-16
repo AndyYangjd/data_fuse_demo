@@ -1,8 +1,11 @@
 import argparse
 import os
+import json
 import platform
 import shutil
 import time
+import operator
+from collections import OrderedDict
 from pathlib import Path
 
 import cv2
@@ -62,6 +65,7 @@ def detect(save_img=False):
     t0 = time.time()
     img = torch.zeros((1, 3, imgsz, imgsz), device=device)  # init img
     _ = model(img.half() if half else img) if device.type != 'cpu' else None  # run once
+    result_dic = {}
     for path, img, im0s, vid_cap in dataset:
         img = torch.from_numpy(img).to(device)
         img = img.half() if half else img.float()  # uint8 to fp16/32
@@ -97,13 +101,22 @@ def detect(save_img=False):
                 det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
 
                 # Print results
+
                 for c in det[:, -1].unique():
                     n = (det[:, -1] == c).sum()  # detections per class
                     s += '%g %ss, ' % (n, names[int(c)])  # add to string
-                    #print(det[:,-1])
-                for c in det[:, -1]:
-                    print(names[int(c)])
 
+
+
+                label_list = []
+                i = 1
+                for c in reversed(det[:, -1]):
+                    label_list.append(names[int(c)] + str(i))
+                    i = i + 1
+
+                #print(label_list)
+
+                coord_list = []
                 # Write results
                 for *xyxy, conf, cls in reversed(det):
                     if save_txt:  # Write to file
@@ -113,7 +126,20 @@ def detect(save_img=False):
 
                     if save_img or view_img:  # Add bbox to image
                         label = '%s %.2f' % (names[int(cls)], conf)
-                        plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=3)
+                        xy_lu,xy_rd = plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=3)
+                        coord_list.append((xy_lu,xy_rd))
+                #print(coord_list)
+
+
+                single_dic = dict(zip(label_list,coord_list))
+                #print(result_dic)
+
+                result_dic[Path(p).name] = single_dic
+
+
+
+
+
 
 
             # Print time (inference + NMS)
@@ -147,6 +173,11 @@ def detect(save_img=False):
 
     print('Done. (%.3fs)' % (time.time() - t0))
 
+
+
+    file_name = 'result_json'
+    with open(file_name, 'w', encoding='UTF-8')as f:
+        json.dump(result_dic, f, indent=4,ensure_ascii=False)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
