@@ -39,3 +39,7 @@ Julia-Dep:
 - tranform_matrix.csv: the out-put of geometry_transform.cpp
 - result_json: the out-put of detect.py ,image detection coordinate
 - image_detection_result: image detection results
+
+## Contributors
+- Andy.Yang: process the data of radar
+- Cheng Shuhui: process the data of images
