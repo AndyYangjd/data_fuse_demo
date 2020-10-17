@@ -46,3 +46,22 @@ Vector3d transCoord(
 
 	return return_pos;
 }
+
+array<Vector3d, 4> getHorPlanePosAnns(const Vector3d & anns_size_)
+{
+	float x, y, z;
+	x = anns_size_[0];
+	y = anns_size_[1];
+	z = anns_size_[2];
+
+	Vector3d pos1{ x /2, y/2, -z/2};
+	Vector3d pos2{ -x /2, y/2, -z/2 };
+	Vector3d pos3{ x/2, -y / 2, -z/2 };
+	Vector3d pos4{ -x/2, -y / 2, -z/2 };
+
+	array<Vector3d, 4> pos_list{
+		pos1, pos2, pos3, pos4
+	};
+
+	return pos_list;
+}

@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <vector>
 #include "coord_trans.hpp"
 
 int main(void)
@@ -44,7 +45,9 @@ int main(void)
 	radar2car_T_mat.rotate(radar_rotation_quat);
 	radar2car_T_mat.pretranslate(radar_trans_m);
 
-	array<Isometry3d, 2> T_sensor2car_list{ cam2car_T_mat, radar2car_T_mat };
+	array<Isometry3d, 2> T_sensor2car_list{ 
+		cam2car_T_mat, radar2car_T_mat
+	};
 
 	Isometry3d car2cam_T_mat = cam2car_T_mat.inverse();
 	Isometry3d car2radar_T_mat = radar2car_T_mat.inverse();
@@ -79,12 +82,95 @@ int main(void)
 	Isometry3d world2car_T_mat = car2world_T_mat.inverse();
 
 	Vector3d posWorld_anns_center{ 399.863, 1143.574, 0.738 };
-	Vector3d posCar_anns_center;
-	posCar_anns_center = transCoord(
-		posWorld_anns_center, 
-		world2car_T_mat
-);
-	cout << posCar_anns_center;
+
+	Vector3d anns_size{ 1.907, 4.727, 1.957 };
+	
+	array<Vector3d, 4> posAnns_list;
+	posAnns_list = getHorPlanePosAnns(anns_size);
+
+	Quaterniond anns_rotation_quta{
+		-0.576881477903537, 0.0, 0.0, 0.816827864639687 };
+	Vector3d anns_translation_m{ 399.863, 1143.574, 0.738 };
+	Isometry3d anns2world_T_mat = Isometry3d::Identity();
+	anns2world_T_mat.rotate(anns_rotation_quta);
+	anns2world_T_mat.pretranslate(anns_translation_m);
+
+	array<Vector3d, 5> posWorld_anns_list;
+	for (int i = 0; i < 4; i++)
+	{
+		Vector3d posWorld_from_anns = transCoord(
+			posAnns_list.at(i),
+			anns2world_T_mat
+		);
+		posWorld_anns_list.at(i)=posWorld_from_anns;
+	}
+	posWorld_anns_list.at(4)=posWorld_anns_center;
+
+	array<Vector3d, 5> posCam_anns_list;
+	vector<double> x_list, y_list,z_list;
+	cout << "posCam-anno:" << endl;
+	for (int i=0;i<5;i++)
+	{
+		Vector3d posCar_anns, posCam_anns;
+		posCar_anns = transCoord(
+			posWorld_anns_list.at(i),
+			world2car_T_mat
+		);
+		x_list.push_back(posCar_anns[0]);
+		y_list.push_back(posCar_anns[1]);
+		z_list.push_back(posCar_anns[2]);
+
+		posCam_anns = transCoord(
+			posCar_anns,
+			car2cam_T_mat,
+			cam_intri_m
+		);
+		posCam_anns = posCam_anns / posCam_anns[2];
+		posCam_anns_list.at(i)=posCam_anns;
+		cout << posCam_anns << endl;
+		cout << endl;
+	}
+	cout << "posCam-anns Over" << endl;
+
+	cout << "x:" << endl;
+	for (auto item : x_list)
+		cout << item << "\t";
+	cout << endl;
+	cout << "y:" << endl;
+	for (auto item : y_list)
+		cout << item << "\t";
+	cout << endl;
+	cout << "z:" << endl;
+	for (auto item : z_list)
+		cout << item << "\t";
+	cout << endl;
+
+
+	Vector3d posUV_1{ 715, 463, 1 };
+	Vector3d posUV_2{ 782, 533, 1 };
+	array<Vector3d, 2> posUV_list{
+			posUV_1, posUV_2
+	};
+
+	array<Vector3d, 2> posCar_list;
+	for (int i=0;i<2;i++)
+	{
+		Vector3d posCar;
+
+		posCar = (cam_intri_m * car2cam_T_mat).inverse() * posUV_list.at(i);
+		
+		double x_true{37.8975};
+		double s = posCar[0] / x_true;
+		posCar = posCar / s;
+
+		posCar_list.at(i) = posCar;
+		cout << posCar << endl;
+		cout << endl;
+	}
+	
+	Vector3d posCar_toUV1{ 39.7491,4.52123,0.300462 };
+
+	array<Vector3d, 4> posCar_toUV_list;
 
 	return 0;
 }
