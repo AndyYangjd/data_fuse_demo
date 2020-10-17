@@ -45,9 +45,13 @@ int main(void)
 	radar2car_T_mat.rotate(radar_rotation_quat);
 	radar2car_T_mat.pretranslate(radar_trans_m);
 
+<<<<<<< HEAD
 	array<Isometry3d, 2> T_sensor2car_list{ 
 		cam2car_T_mat, radar2car_T_mat
 	};
+=======
+	array<Isometry3d, 2> T_sensor2car_list{ cam2car_T_mat, radar2car_T_mat };
+>>>>>>> 9bad44cd29a2c6ef260c7a6170c32518f8df15a5
 
 	Isometry3d car2cam_T_mat = cam2car_T_mat.inverse();
 	Isometry3d car2radar_T_mat = radar2car_T_mat.inverse();
@@ -82,6 +86,7 @@ int main(void)
 	Isometry3d world2car_T_mat = car2world_T_mat.inverse();
 
 	Vector3d posWorld_anns_center{ 399.863, 1143.574, 0.738 };
+<<<<<<< HEAD
 
 	Vector3d anns_size{ 1.907, 4.727, 1.957 };
 	
@@ -171,6 +176,14 @@ int main(void)
 	Vector3d posCar_toUV1{ 39.7491,4.52123,0.300462 };
 
 	array<Vector3d, 4> posCar_toUV_list;
+=======
+	Vector3d posCar_anns_center;
+	posCar_anns_center = transCoord(
+		posWorld_anns_center, 
+		world2car_T_mat
+);
+	cout << posCar_anns_center;
+>>>>>>> 9bad44cd29a2c6ef260c7a6170c32518f8df15a5
 
 	return 0;
 }
