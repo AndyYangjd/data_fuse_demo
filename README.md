@@ -5,7 +5,7 @@ create a demo about data-fuse using nuScenes dataset
 lan:
 - Python:3.8: extract info
 - Cpp: support c++11
-- julia: 1.5.1
+- julia: 1.5.1, test the algorithm and visualize
 
 Ide:
 - vscode
