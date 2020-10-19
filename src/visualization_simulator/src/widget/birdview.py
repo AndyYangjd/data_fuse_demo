@@ -138,6 +138,7 @@ class BirdView(Ui_birdview, QtWidgets.QWidget):
         # set left-axis
         left_axis = pg.AxisItem(orientation='left', pen=(255, 255, 255))
         left_axis.setLabel(text='X', units='m')
+        left_axis.setTickSpacing(5,1)
         left_axis.enableAutoSIPrefix(False)
         self.bd.ci.addItem(left_axis, 0, 0)
 
@@ -148,6 +149,7 @@ class BirdView(Ui_birdview, QtWidgets.QWidget):
         # set bottom-axis
         bottom_axis = pg.AxisItem(orientation='bottom', pen=(255, 255, 255))
         bottom_axis.setLabel(text='Y', units='m')
+        bottom_axis.setTickSpacing(5, 1)
         bottom_axis.enableAutoSIPrefix(False)
         self.bd.ci.addItem(bottom_axis, 1, 1)
 

@@ -27,6 +27,10 @@ Cpp-Dep:
 
 Julia-Dep:
 - LinearAlgeora
+- DataFrames
+- XLSX
+- Plots
+- PyPlot
 
 ## visualization
 Source code store in src/visualization_simulator
