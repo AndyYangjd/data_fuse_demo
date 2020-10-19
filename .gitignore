@@ -9,6 +9,15 @@ src/vs_prj/geometry_transform/Release/
 *.obj
 *.pdb
 *.idb
+*.ilk
+*.exe
+*.suo
+*.db
+*.recipe
+*.ipch
+3rdParty/
+
+Untitled.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -26,7 +35,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/

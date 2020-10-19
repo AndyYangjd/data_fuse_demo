@@ -1,0 +1,5 @@
+pcl_viewer -ps 5 -ax 10 -cam viewer_orientation.cam *.pcd
+
+# -ps 5: set the point size of points
+# -ax 10: show the coordinates and scale 10
+# -cam *.cam: set the orientation of the coordinates
