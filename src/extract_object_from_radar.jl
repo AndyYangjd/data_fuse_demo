@@ -6,7 +6,7 @@ include("visualize_radar_points.jl")
 using .visualize
 
 prj_path = dirname(dirname(@__FILE__));
-xls_file_path = prj_path * raw"\data\radar_points.xlsx";
+xls_file_path = prj_path * raw"\data\radar_process\radar_points.xlsx";
 
 #= 
 for id_sample in 1:38
