@@ -22,3 +22,5 @@ Vector3d transCoord(
 	const Isometry3d & T_,
 	const Matrix3d & Mat_intri_=Matrix3d::Zero()
 );
+
+array<Vector3d, 4> getHorPlanePosAnns(const Vector3d& anns_size_);

@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="pho">
+    <file alias="play.png">images/play.png</file>
+    <file alias="pause.png">images/pause.png</file>
+    <file alias="cycle.png">images/cycle.png</file>   
+  </qresource>
+</RCC>
