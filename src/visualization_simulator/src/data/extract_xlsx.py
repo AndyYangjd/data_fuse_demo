@@ -17,8 +17,8 @@ def getData(file_pth=None):
             current_data = {
                 "x": x,
                 "y": y,
-                "vx_compy": vx_comp,
-                "vy_compy": vy_comp
+                "vx_comp": vx_comp,
+                "vy_comp": vy_comp
             }
             return_data.append(current_data)
 
