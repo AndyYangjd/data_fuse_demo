@@ -6,7 +6,7 @@ using XLSX;
 prj_path = dirname(dirname(@__FILE__))
 data_path = prj_path * raw"\data\data_no_anno\radar_ascii";
 
-xls_file_path = prj_path * raw"\data\radar_points.xlsx";
+xls_file_path = prj_path * raw"\data\radar_process\radar_points.xlsx";
 XLSX.openxlsx(xls_file_path, mode="w") do xf
     for file_id in 1:38
         file_path = data_path * "\\$file_id.pcd"
