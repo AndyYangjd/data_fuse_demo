@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 from PyQt5 import QtGui, QtCore, QtWidgets
 import pyqtgraph as pg
 
@@ -123,12 +124,9 @@ class BirdView(Ui_birdview, QtWidgets.QWidget):
         self.pos_color = (255, 0, 0)
         self.pos_Pen = QtGui.QPen(QtCore.Qt.red, 0.1, QtCore.Qt.SolidLine,
                                   QtCore.Qt.SquareCap, QtCore.Qt.MiterJoin)
-        self.rs_color = (255, 255, 0)
-        self.rs_Pen = QtGui.QPen(QtCore.Qt.yellow, 0.1, QtCore.Qt.SolidLine,
-                                 QtCore.Qt.SquareCap, QtCore.Qt.MiterJoin)
-        self.vel_color = (0, 0, 255)
-        self.vel_Pen = QtGui.QPen(QtCore.Qt.blue, 0.05, QtCore.Qt.SolidLine,
-                                  QtCore.Qt.RoundCap, QtCore.Qt.MiterJoin)
+        self.vel_color = (255, 255, 0)
+        self.vel_Pen = QtGui.QPen(QtCore.Qt.yellow, 0.1, QtCore.Qt.SolidLine,
+                                  QtCore.Qt.SquareCap, QtCore.Qt.MiterJoin)
 
     def _createVB(self):
         """
@@ -223,8 +221,6 @@ class BirdView(Ui_birdview, QtWidgets.QWidget):
         self.sBox_current_frame_num.setValue(i_current_slider_num)
         # update vb
         self._updateVB()
-        # update tView
-        self._updateTreeData()
 
     def _updateSliderFromSBox(self, i_current_sbox_num):
         self.slider.setValue(i_current_sbox_num)
@@ -293,16 +289,28 @@ class BirdView(Ui_birdview, QtWidgets.QWidget):
             self.all_items_need_to_remove = []
 
             current_x_list = self.data[self.i_current_frame_num]["x"]
-            current_y_list = self.data[self.i_current_frame_num]["x"]
+            current_y_list = self.data[self.i_current_frame_num]["y"]
             current_vx_list = self.data[self.i_current_frame_num]["vx_comp"]
             current_vy_list = self.data[self.i_current_frame_num]["vy_comp"]
+
+            current_x_list = np.array(current_x_list)
+            current_y_list = np.array(current_y_list)
+            current_vx_list = np.array(current_vx_list)
+            current_vy_list = np.array(current_vy_list)
 
             # draw pos
             pos_pen = self.pos_Pen
             color = self.pos_color
 
-            pos_curve = pg.ScatterPlotItem(x=current_x_list,
-                                           y=current_y_list,
+            rotated_x_list = np.zeros_like(current_x_list)
+            rotated_y_list = np.zeros_like(current_y_list)
+            for row in range(len(current_x_list)):
+                rotated_x_list[row], rotated_y_list[
+                    row] = self._transformCoord(
+                        (current_x_list[row], current_y_list[row]))
+
+            pos_curve = pg.ScatterPlotItem(x=rotated_x_list,
+                                           y=rotated_y_list,
                                            pen=pos_pen,
                                            symbolBrush=color,
                                            symbolPen='w',
@@ -322,9 +330,38 @@ class BirdView(Ui_birdview, QtWidgets.QWidget):
             plt_y_list = current_y_list + current_vy_list
 
             for row in range(len(plt_x_list)):
-                vel_line = pg.PlotCurveItem(x=plt_x_list[row],
-                                            y=plt_y_list[row],
-                                            pen=self.vel_Pen,
-                                            antialias=True)
+                rotated_plt_x, rotated_plt_y = self._transformCoord(
+                    (plt_x_list[row], plt_y_list[row]))
+                vel_line = pg.PlotCurveItem(
+                    x=[rotated_x_list[row], rotated_plt_x],
+                    y=[rotated_y_list[row], rotated_plt_y],
+                    pen=self.vel_Pen,
+                    antialias=True)
                 self.vb.addItem(vel_line, ignoreBounds=False)
                 self.all_items_need_to_remove.append(vel_line)
+
+    def _play(self):
+        if self.b_play:
+            if self.i_current_frame_num == 38:  # arrive to end
+                if self.b_cycle:  # in cycle-status
+                    self.i_current_frame_num = 0
+                    self._play()
+                else:  # in end-status
+                    self.onPause()
+            else:  # play-status
+                self._updateVB()
+                self._updateSlider()
+
+                self.timer = QtCore.QTimer()
+                # self.timer.setInterval(self.ts_period)
+                self.timer.setSingleShot(True)
+                self.timer.start(300)
+                self.timer.timeout.connect(self._updateFrameNum)
+
+    def _updateFrameNum(self):
+        self.i_current_frame_num += 1
+        self._play()
+
+    def _transformCoord(self, true_pos):
+        true_x, true_y = true_pos
+        return (true_y, true_x)

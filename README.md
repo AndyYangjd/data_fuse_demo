@@ -1,7 +1,7 @@
 # data_fuse_demo
 create a demo about data-fuse using nuScenes dataset
 
-# language, Ide, 3rd-Dependency
+## language, Ide, 3rd-Dependency
 lan:
 - Python:3.8: extract info
 - Cpp: support c++11
@@ -17,12 +17,21 @@ Python-Dep:
 - json
 - nuscenes-devkit
 - torch.etc(what yolov5 needs)
+- PyQt5
+- numpy
+- pyqtgraph
+- xlrd3
 
 Cpp-Dep:
 - Eigne3
 
 Julia-Dep:
 - LinearAlgeora
+
+## visualization
+Source code store in src/visualization_simulator
+- run: runing gui.py will open this program
+- data-file: open data/radar_points.xlsx
 
 ## src/file-role
 - extract_one_scene.py: extract can-front and radar-front file-path in the first scene
