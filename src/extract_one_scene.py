@@ -3,6 +3,7 @@
 
 import json
 
+from pathlib import Path
 import matplotlib
 
 from nuscenes.nuscenes import NuScenes
@@ -104,7 +105,7 @@ for sensor_channel in sensors:
 
 extracted_data_json = json.dumps(extracted_data, )
 
-with open("src/extracted_data.json", "w") as f:
+with open("src/extracted_sensor_data.json", "w") as f:
     try:
         json.dump(extracted_data, f, indent=4, separators=(',', ': '))
     except IOError:
