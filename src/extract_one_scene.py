@@ -2,6 +2,7 @@
 # extract can-front and radar-front file-path in the first scene
 
 import json
+import os
 
 from pathlib import Path
 import matplotlib
@@ -9,7 +10,7 @@ import matplotlib
 from nuscenes.nuscenes import NuScenes
 
 nusc = NuScenes(version='v1.0-mini',
-                dataroot=r'F:\datasets\data\sets\nuscenes',
+                dataroot=r'D:\datasets\data\sets\nuscenes',
                 verbose=True)
 
 my_scene = nusc.scene[0]
@@ -105,7 +106,10 @@ for sensor_channel in sensors:
 
 extracted_data_json = json.dumps(extracted_data, )
 
-with open("src/extracted_sensor_data.json", "w") as f:
+prj_pth = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+dest_pth = os.path.join(prj_pth, "data", "extracted_sensor_data.json")
+
+with open(dest_pth, "w") as f:
     try:
         json.dump(extracted_data, f, indent=4, separators=(',', ': '))
     except IOError:
