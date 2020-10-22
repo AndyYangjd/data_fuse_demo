@@ -8,7 +8,7 @@ import json
 
 from nuscenes.nuscenes import NuScenes
 
-nuscens_dataset_pth = r"F:\datasets\data\sets\nuscenes"
+nuscens_dataset_pth = r'D:\datasets\data\sets\nuscenes'
 nusc = NuScenes(version='v1.0-mini',
                 dataroot=nuscens_dataset_pth,
                 verbose=True)
@@ -58,14 +58,14 @@ while not current_sample['next'] == '':
     current_sample = nusc.get('sample', current_sample_token)
     sample_id += 1
 
-prj_pth = os.path.dirname(os.path.dirname(__file__))
-dest_pth = os.path.join(prj_pth, "data", "radar_process")
-print(dest_pth)
+prj_pth = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+dest_pth = os.path.join(prj_pth, "data", "radar_process",
+                        "extracted_anns_data.json")
 
-# with open("src/extracted_anns_data.json", "w") as f:
-#     try:
-#         json.dump(extracted_data, f, indent=4, separators=(',', ': '))
-#     except IOError:
-#         print("write json Error")
-#     else:
-#         print("write to json succeed")
+with open(dest_pth, "w") as f:
+    try:
+        json.dump(extracted_data, f, indent=4, separators=(',', ': '))
+    except IOError:
+        print("write json Error")
+    else:
+        print("write to json succeed")
