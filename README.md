@@ -1,6 +1,8 @@
 # data_fuse_demo
 create a demo about data-fuse using nuScenes dataset
 
+注：此项目已暂停更新，使用Cpp重构此项目，并为了push, pull速度，托管在Gitee: https://gitee.com/andyangj/setSail.git
+
 ## language, Ide, 3rd-Dependency
 lan:
 - Python:3.8: extract info
